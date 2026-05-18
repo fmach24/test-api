@@ -1,0 +1,63 @@
+---
+- hosts: vm
+  name: testowa-maszyna
+  become: true
+  tasks:
+    - name: Install dependencies
+      apt:
+        name:
+          - apt-transport-https      # pozwala apt pobierać pakiety przez HTTPS
+          - ca-certificates          # certyfikaty SSL/TLS
+          - curl                      # narzędzie do pobierania z internetu
+          - gnupg                     # narzędzie do weryfikacji podpisów cyfrowych
+        state: present               # upewnij się, że pakiety SĄ zainstalowane
+        update_cache: true           # uruchom apt-get update przed instalacją
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository #mowimy gdzie sys ma szukac pakietiow dockera zamiast domyslnie
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce              # Docker Community Edition (główny pakiet)
+          - docker-ce-cli          # narzędzia command-line do zarządzania Dockerem
+          - containerd.io          # runtime kontenera (niższy poziom abstrakcji)
+        state: present
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"  # aktualny użytkownik SSH (zmienna Ansible)
+        groups: docker              # dodaj do grupy "docker"
+        append: true                # DOŁĄCZ do istniejących grup, nie zastępuj je
+
+    - name: Install kubectl
+      shell: |
+        curl -LO "https://dl.k8s.io/release/$(curl -sL https:– Biometric Access System (Python, Flask, React, Firebase)//dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        mv kubectl /usr/local/bin/kubectl
+      args:
+        creates: /usr/local/bin/kubectl  # pomiń zadanie, jeśli plik już istnieje
+
+    - name: Install k3d
+      shell: |
+        curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+      args:
+        creates: /usr/local/bin/k3d
+
+    - name: Create k3d cluster
+      shell: k3d cluster create devops-lab --port "8080:80@loadbalancer"
+      become: false                   # uruchom jako zwykły użytkownik, NIE jako root
+      ignore_errors: true             # nie zatrzymuj się, jeśli się nie powiedzie
+
+    - name: Install ArgoCD
+      shell: |
+        kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+        kubectl apply --server-side --force-conflicts -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      become: false

@@ -1,7 +1,5 @@
 from fastapi import FastAPI 
 import os
-import subprocess
-import shutil
 
 app = FastAPI()
 
@@ -10,8 +8,6 @@ APP_VERSION = os.getenv("APP_VERSION")
 if APP_VERSION is None:
     raise ValueError("APP_VERSION is not set")
 
-
-#sys_uptime = subprocess.check_output(["uptime", "-p"]).decode().strip()
 def get_uptime():
     try:
         with open("/proc/uptime") as f:
