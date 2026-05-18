@@ -7,7 +7,7 @@ FROM python:3.12-slim AS runtime
 WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY main.py .
-#ENV APP_VERSION=1.0.0 
+ENV APP_VERSION=1.0.0 
 #TODO dodac potem versje jako short sha z gita
 #jednak nvm, env jest dodawany treraz przez k8s
 RUN useradd -m appuser
