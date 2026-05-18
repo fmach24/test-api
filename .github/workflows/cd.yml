@@ -42,9 +42,9 @@ jobs:
       - name: Update image tag in k8s manifest
         run: |
           TAG=${{ github.sha }}
-          sed -i "s|image: ghcr.io.*|image: $IMAGE:$TAG|" k8s/deployment.yaml
+          sed -i "s|image: ghcr.io.*|image: $IMAGE:$TAG|" k8s/deployment.yml
           git config user.email "ci@github.com"
           git config user.name "GitHub Actions"
-          git add k8s/deployment.yaml
+          git add k8s/deployment.yml
           git commit -m "ci: update image tag to $TAG"
           git push
