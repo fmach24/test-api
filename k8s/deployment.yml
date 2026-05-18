@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: ghcr.io/fmach24/test-api:5858404c7e62abd4250226963f902546c325c8fe
+          image: ghcr.io/fmach24/test-api:8c2f2c0af20b5e199b848f6972a0c17022328d4d
           ports:
             - containerPort: 8000
           env:
