@@ -15,6 +15,10 @@ spec:
     spec:
       containers:
         - name: myapp
+<<<<<<< HEAD
           image: ghcr.io/fmach24/test-api:latest
+=======
+          image: ghcr.io/fmach24/test-api:2b3237076a0ae5ecc146e972bde8b2f0ab515829
+>>>>>>> refs/remotes/origin/main
           ports:
             - containerPort: 8000
