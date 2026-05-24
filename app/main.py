@@ -3,7 +3,7 @@ import os
 
 app = FastAPI()
 
-APP_VERSION = os.getenv("APP_VERSION", 'unknown')
+APP_VERSION = os.getenv("APP_VERSION")
 
 if APP_VERSION is None:
     raise ValueError("APP_VERSION is not set")

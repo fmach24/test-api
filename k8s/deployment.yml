@@ -15,9 +15,6 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: ghcr.io/fmach24/test-api:34d9f353938a4afeee8f296a18facffc039eb655
+          image: ghcr.io/fmach24/test-api:latest
           ports:
             - containerPort: 8000
-          env:
-            - name: APP_VERSION
-              value: "1.0.0" #TODO version to short sha z github
