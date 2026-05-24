@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/test-api 
+  TAG: ${{ github.sha }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r app/requirements.txt
+      - run: cd app && pytest test_main.py -v
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Set short SHA
+        run: SHORT_TAG=${TAG::7} #for app version, not available in next jobs
+
+      - name: Login to ghcr.io
+        run: echo "${{ secrets.GH_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push image
+        run: |
+          docker build --build-arg APP_VERSION=$SHORT_TAG -t $IMAGE:$TAG -t $IMAGE:latest app/
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
