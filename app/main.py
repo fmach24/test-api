@@ -3,11 +3,6 @@ import os
 
 app = FastAPI()
 
-APP_VERSION = os.getenv("APP_VERSION")
-
-if APP_VERSION is None:
-    raise ValueError("APP_VERSION is not set")
-
 def get_uptime():
     try:
         with open("/proc/uptime") as f:
@@ -22,6 +17,11 @@ def health():
 
 @app.get("/version")
 def version():
+    APP_VERSION = os.getenv("APP_VERSION")
+
+    if APP_VERSION is None:
+        raise ValueError("APP_VERSION is not set")
+
     return {"version": APP_VERSION}
 
 @app.get("/uptime")
