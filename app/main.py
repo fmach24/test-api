@@ -17,10 +17,10 @@ def health():
 
 @app.get("/version")
 def version():
-    APP_VERSION = os.getenv("APP_VERSION")
+    APP_VERSION = os.getenv("APP_VERSION", "not set")
 
-    if APP_VERSION is None:
-        raise ValueError("APP_VERSION is not set")
+    # if APP_VERSION is None:
+    #     raise ValueError("APP_VERSION is not set")
 
     return {"version": APP_VERSION}
 
